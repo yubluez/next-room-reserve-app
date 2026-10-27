@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Room {
+  id              Int         @id @default(autoincrement())
+  roomCode        String      @unique
+  roomName        String
+  capacity        Int
+  location        String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  bookings        Booking[]
+}
+
+model Booking {
+  id             Int          @id @default(autoincrement())
+  bookerName     String
+  purpose        String
+  startTime      DateTime
+  endTime        DateTime
+  attendeeCount  Int
+  roomId         Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Restrict)
+
+  @@index([roomId, startTime, endTime])
+}
